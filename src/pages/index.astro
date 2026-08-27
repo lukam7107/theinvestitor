@@ -1,0 +1,79 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Sparkline from '../components/Sparkline.astro';
+import { getCollection } from 'astro:content';
+
+const analize = (await getCollection('analize')).sort(
+  (a, b) => b.data.datum.valueOf() - a.data.datum.valueOf()
+);
+---
+<Layout title="Domov">
+  <section class="hero-split">
+    <div class="hero">
+      <span class="eyebrow">Delniške analize v slovenščini</span>
+      <h1>Resen research, <em>brez šuma</em>.</h1>
+      <p class="lead">
+        99&nbsp;% kvalitetne investicijske vsebine je v angleščini. TheInvestitor prinaša
+        poglobljene analize delnic za slovenske in balkanske retail investitorje —
+        poslovni model, številke, bull &amp; bear scenariji in naša ocena poštene vrednosti.
+      </p>
+    </div>
+    <div class="hero-chart" aria-hidden="true">
+      <svg viewBox="0 0 340 220" width="100%" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="heroGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#0e6b4f" stop-opacity="0.25" />
+            <stop offset="100%" stop-color="#0e6b4f" stop-opacity="0" />
+          </linearGradient>
+        </defs>
+        <g stroke="#e3e0d6" stroke-width="1">
+          <line x1="0" y1="55" x2="340" y2="55" />
+          <line x1="0" y1="110" x2="340" y2="110" />
+          <line x1="0" y1="165" x2="340" y2="165" />
+        </g>
+        <polygon
+          points="0,220 0,170 30,160 60,175 90,140 120,150 150,115 180,125 210,95 240,105 270,70 300,80 340,40 340,220"
+          fill="url(#heroGrad)"
+        />
+        <polyline
+          points="0,170 30,160 60,175 90,140 120,150 150,115 180,125 210,95 240,105 270,70 300,80 340,40"
+          fill="none" stroke="#0e6b4f" stroke-width="3"
+          stroke-linecap="round" stroke-linejoin="round"
+        />
+        <circle cx="340" cy="40" r="5" fill="#0e6b4f" />
+        <g font-family="'JetBrains Mono', monospace" font-size="11" fill="#5a6156">
+          <text x="6" y="48">fair value</text>
+        </g>
+        <line x1="0" y1="40" x2="330" y2="40" stroke="#6c4cf1" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.7" />
+      </svg>
+    </div>
+  </section>
+
+  <div class="section-title">
+    <h2>Zadnje analize</h2>
+  </div>
+  <section class="card-grid">
+    {analize.map((entry) => {
+      const up = (entry.data.fairValueMin + entry.data.fairValueMax) / 2 >= entry.data.cena;
+      return (
+        <a class="card" href={`/analize/${entry.slug}`}>
+          <div class="chip-row">
+            <span class="chip ticker">{entry.data.ticker}</span>
+            <span class="chip">{entry.data.borza}</span>
+          </div>
+          <h3>{entry.data.title}</h3>
+          <p>{entry.data.povzetek}</p>
+          <div class="card-spark">
+            <Sparkline seed={entry.data.ticker} up={up} />
+          </div>
+          <div class="card-meta">
+            <span class="mono price">{entry.data.cena.toFixed(2)} {entry.data.valuta}</span>
+            <span class={`mono fv ${up ? 'pos' : 'neg'}`}>
+              FV {entry.data.fairValueMin}–{entry.data.fairValueMax} {entry.data.fairValueValuta}
+            </span>
+          </div>
+        </a>
+      );
+    })}
+  </section>
+</Layout>

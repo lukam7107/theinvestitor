@@ -1,0 +1,120 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Sparkline from '../../components/Sparkline.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const analize = await getCollection('analize');
+  return analize.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props as { entry: CollectionEntry<'analize'> };
+const { Content } = await entry.render();
+const d = entry.data;
+
+const fmtDate = new Intl.DateTimeFormat('sl-SI', { year: 'numeric', month: 'long', day: 'numeric' }).format(d.datum);
+
+const fvMid = (d.fairValueMin + d.fairValueMax) / 2;
+const up = fvMid >= d.cena;
+const upside = ((fvMid / d.cena) - 1) * 100;
+
+// pozicije za fair-value range bar (skala od min do max vseh vrednosti + rob)
+const lo = Math.min(d.cena, d.fairValueMin);
+const hi = Math.max(d.cena, d.fairValueMax);
+const span = (hi - lo) || 1;
+const margin = span * 0.15;
+const scaleMin = lo - margin;
+const scaleMax = hi + margin;
+const pct = (v: number) => ((v - scaleMin) / (scaleMax - scaleMin)) * 100;
+---
+<Layout title={d.title} description={d.povzetek}>
+  <header class="analiza-head">
+    {d.demo && <span class="demo-flag">DEMO / placeholder vsebina — ni prava analiza</span>}
+    <div class="chip-row">
+      <span class="chip ticker">{d.ticker}</span>
+      <span class="chip">{d.borza}</span>
+      <span class="chip">{d.sektor}</span>
+    </div>
+    <h1>{d.title}</h1>
+    <p class="date">Objavljeno: {fmtDate}</p>
+  </header>
+
+  <div class="page-spark">
+    <Sparkline seed={d.ticker} up={up} width={720} height={120} />
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat">
+      <div class="label">Cena</div>
+      <div class="value">{d.cena.toFixed(2)} {d.valuta}</div>
+    </div>
+    <div class="stat">
+      <div class="label">Tržna kap.</div>
+      <div class="value">{d.marketCap}</div>
+    </div>
+    <div class="stat">
+      <div class="label">Fair value</div>
+      <div class="value" style="color: var(--purple);">{d.fairValueMin}–{d.fairValueMax}</div>
+    </div>
+    <div class="stat">
+      <div class="label">Potencial</div>
+      <div class="value" style={`color: var(--${up ? 'green' : 'red'});`}>
+        {upside >= 0 ? '+' : ''}{upside.toFixed(0)} %
+      </div>
+    </div>
+  </div>
+
+  <article class="prose">
+    <h2>Poslovni model</h2>
+    <Content />
+
+    <h2>Bull / Bear scenarij</h2>
+    <div class="bull-bear">
+      <div class="col bull">
+        <h4>▲ Bull</h4>
+        <ul>
+          {d.bullCase.map((point) => <li>{point}</li>)}
+        </ul>
+      </div>
+      <div class="col bear">
+        <h4>▼ Bear</h4>
+        <ul>
+          {d.bearCase.map((point) => <li>{point}</li>)}
+        </ul>
+      </div>
+    </div>
+
+    <div class="fair-value">
+      <h3>Claude Fair Value</h3>
+      <div class="range">{d.fairValueMin}–{d.fairValueMax} {d.fairValueValuta}</div>
+      <div class="fv-bar">
+        <div class="track">
+          <div
+            class="zone"
+            style={`left: ${pct(d.fairValueMin)}%; width: ${pct(d.fairValueMax) - pct(d.fairValueMin)}%;`}
+          ></div>
+          <div class="marker" style={`left: ${pct(d.cena)}%;`}>
+            <span class="dot"></span>
+            <span class="marker-label mono">cena {d.cena.toFixed(2)}</span>
+          </div>
+        </div>
+        <div class="fv-legend mono">
+          <span>trenutna cena</span>
+          <span class="zone-label">fair value razpon</span>
+        </div>
+      </div>
+      <p>Naša ocena poštene vrednosti glede na trenutne fundamente in scenarije zgoraj.</p>
+    </div>
+  </article>
+
+  <div class="disclaimer">
+    Ta analiza je pripravljena v izobraževalne in informativne namene ter ne
+    predstavlja investicijskega priporočila, ponudbe ali osebnega finančnega
+    nasveta. Vlaganje v delnice je tvegano in lahko privede do izgube glavnice.
+    Pred odločitvijo se posvetujte z neodvisnim finančnim svetovalcem in opravite
+    lastno analizo.
+  </div>
+</Layout>

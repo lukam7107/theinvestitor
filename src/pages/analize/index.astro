@@ -1,0 +1,37 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Sparkline from '../../components/Sparkline.astro';
+import { getCollection } from 'astro:content';
+
+const analize = (await getCollection('analize')).sort(
+  (a, b) => b.data.datum.valueOf() - a.data.datum.valueOf()
+);
+---
+<Layout title="Analize">
+  <h1>Vse analize</h1>
+  <section class="card-grid" style="margin-top: 24px;">
+    {analize.map((entry) => {
+      const up = (entry.data.fairValueMin + entry.data.fairValueMax) / 2 >= entry.data.cena;
+      return (
+        <a class="card" href={`/analize/${entry.slug}`}>
+          <div class="chip-row">
+            <span class="chip ticker">{entry.data.ticker}</span>
+            <span class="chip">{entry.data.borza}</span>
+            <span class="chip">{entry.data.sektor}</span>
+          </div>
+          <h3>{entry.data.title}</h3>
+          <p>{entry.data.povzetek}</p>
+          <div class="card-spark">
+            <Sparkline seed={entry.data.ticker} up={up} />
+          </div>
+          <div class="card-meta">
+            <span class="mono price">{entry.data.cena.toFixed(2)} {entry.data.valuta}</span>
+            <span class={`mono fv ${up ? 'pos' : 'neg'}`}>
+              FV {entry.data.fairValueMin}–{entry.data.fairValueMax} {entry.data.fairValueValuta}
+            </span>
+          </div>
+        </a>
+      );
+    })}
+  </section>
+</Layout>
