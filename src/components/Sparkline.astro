@@ -43,7 +43,7 @@ const pts = values.map((val, i) => {
 });
 const line = pts.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' ');
 const area = `${pad},${height} ${line} ${(width - pad).toFixed(1)},${height}`;
-const color = up ? '#0e6b4f' : '#b4442f';
+const color = up ? '#2fe08a' : '#ff5c72';
 const gid = `g-${hash(seed).toString(36)}`;
 const [lx, ly] = pts[pts.length - 1];
 ---
