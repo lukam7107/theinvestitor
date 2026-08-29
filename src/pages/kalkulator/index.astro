@@ -1,0 +1,177 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout title="Kalkulator" description="Izračunaj, koliko bi lahko imel, če bi redno vlagal v delnice.">
+  <header class="analiza-head">
+    <span class="eyebrow">Moč obrestnoobrestnega računa</span>
+    <h1>Kolikšna je cena čakanja?</h1>
+    <p class="lead" style="margin-top: 10px;">
+      Vnesi začetni znesek, mesečni prispevek in leta vlaganja — izračunava,
+      koliko bi lahko zraslo ob povprečni zgodovinski donosnosti trga.
+    </p>
+  </header>
+
+  <div class="calc-wrap">
+    <div class="calc-controls">
+      <div class="calc-field">
+        <div class="calc-label-row">
+          <label for="initial">Začetni vložek</label>
+          <span class="calc-out mono" id="initial-out">1.000 €</span>
+        </div>
+        <input type="range" id="initial" min="0" max="20000" step="100" value="1000" />
+      </div>
+
+      <div class="calc-field">
+        <div class="calc-label-row">
+          <label for="monthly">Mesečni prispevek</label>
+          <span class="calc-out mono" id="monthly-out">100 €</span>
+        </div>
+        <input type="range" id="monthly" min="0" max="1000" step="10" value="100" />
+      </div>
+
+      <div class="calc-field">
+        <div class="calc-label-row">
+          <label for="years">Leta vlaganja</label>
+          <span class="calc-out mono" id="years-out">20 let</span>
+        </div>
+        <input type="range" id="years" min="1" max="40" step="1" value="20" />
+      </div>
+
+      <div class="calc-field">
+        <div class="calc-label-row">
+          <label for="rate">Pričakovana letna donosnost</label>
+          <span class="calc-out mono" id="rate-out">10 %</span>
+        </div>
+        <input type="range" id="rate" min="1" max="15" step="0.5" value="10" />
+        <p class="calc-hint">Zgodovinsko povprečje S&amp;P 500 je bilo ~10 % letno (pred inflacijo), v resnici se donosnost iz leta v leto zelo razlikuje.</p>
+      </div>
+    </div>
+
+    <div class="calc-result">
+      <div class="stat-grid" style="margin: 0 0 20px;">
+        <div class="stat">
+          <div class="label">Vloženo skupaj</div>
+          <div class="value mono" id="stat-invested">0 €</div>
+        </div>
+        <div class="stat">
+          <div class="label">Dobiček</div>
+          <div class="value mono" id="stat-profit" style="color: var(--green);">0 €</div>
+        </div>
+      </div>
+
+      <div class="fair-value" style="margin-top: 0;">
+        <h3>Končna vrednost</h3>
+        <div class="range mono" id="stat-total">0 €</div>
+        <p>Ob izbrani donosnosti in rednem mesečnem vlaganju skozi izbrano obdobje.</p>
+      </div>
+
+      <div class="page-spark" style="margin-top: 20px;">
+        <svg id="calc-chart" viewBox="0 0 720 220" width="100%" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="calcGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.3" />
+              <stop offset="100%" stop-color="#22d3ee" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+          <polygon id="calc-area" points="" fill="url(#calcGrad)" />
+          <polyline id="calc-invested-line" points="" fill="none" stroke="#5b6270" stroke-width="2" stroke-dasharray="5 5" />
+          <polyline id="calc-line" points="" fill="none" stroke="#22d3ee" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="disclaimer">
+    Ta kalkulator je izobraževalno orodje, ne napoved prihodnjih donosov. Donosnost je
+    poenostavljena (fiksna letna stopnja), medtem ko realni trgi nihajo iz leta v leto.
+    Pretekla donosnost ne zagotavlja prihodnjih rezultatov. To ni investicijski nasvet.
+  </div>
+</Layout>
+
+<script>
+  function fmt(n: number) {
+    return Math.round(n).toLocaleString('sl-SI') + ' €';
+  }
+
+  const initial = document.getElementById('initial') as HTMLInputElement;
+  const monthly = document.getElementById('monthly') as HTMLInputElement;
+  const years = document.getElementById('years') as HTMLInputElement;
+  const rate = document.getElementById('rate') as HTMLInputElement;
+
+  const initialOut = document.getElementById('initial-out')!;
+  const monthlyOut = document.getElementById('monthly-out')!;
+  const yearsOut = document.getElementById('years-out')!;
+  const rateOut = document.getElementById('rate-out')!;
+
+  const statInvested = document.getElementById('stat-invested')!;
+  const statProfit = document.getElementById('stat-profit')!;
+  const statTotal = document.getElementById('stat-total')!;
+
+  const area = document.getElementById('calc-area')!;
+  const line = document.getElementById('calc-line')!;
+  const investedLine = document.getElementById('calc-invested-line')!;
+
+  function compute() {
+    const P = parseFloat(initial.value);
+    const M = parseFloat(monthly.value);
+    const Y = parseInt(years.value, 10);
+    const R = parseFloat(rate.value) / 100;
+
+    initialOut.textContent = fmt(P);
+    monthlyOut.textContent = fmt(M);
+    yearsOut.textContent = `${Y} let`;
+    rateOut.textContent = `${rate.value} %`;
+
+    const monthlyRate = R / 12;
+    const totalMonths = Y * 12;
+
+    const points: number[] = [];
+    const investedPoints: number[] = [];
+    let balance = P;
+    let invested = P;
+    points.push(balance);
+    investedPoints.push(invested);
+
+    for (let m = 1; m <= totalMonths; m++) {
+      balance = balance * (1 + monthlyRate) + M;
+      invested += M;
+      if (m % 12 === 0) {
+        points.push(balance);
+        investedPoints.push(invested);
+      }
+    }
+    if (points.length === 1) {
+      points.push(balance);
+      investedPoints.push(invested);
+    }
+
+    const finalValue = points[points.length - 1];
+    const totalInvested = investedPoints[investedPoints.length - 1];
+    const profit = finalValue - totalInvested;
+
+    statInvested.textContent = fmt(totalInvested);
+    statProfit.textContent = '+' + fmt(profit);
+    statTotal.textContent = fmt(finalValue);
+
+    const w = 720, h = 220, pad = 6;
+    const maxV = Math.max(...points, 1);
+    const n = points.length;
+    const toXY = (i: number, v: number) => {
+      const x = pad + (i / (n - 1)) * (w - 2 * pad);
+      const y = pad + (1 - v / maxV) * (h - 2 * pad);
+      return [x, y];
+    };
+    const linePts = points.map((v, i) => toXY(i, v).join(',')).join(' ');
+    const investedPts = investedPoints.map((v, i) => toXY(i, v).join(',')).join(' ');
+    const firstXY = toXY(0, points[0]);
+    const lastXY = toXY(n - 1, points[n - 1]);
+    const areaPts = `${firstXY[0]},${h} ${linePts} ${lastXY[0]},${h}`;
+
+    line.setAttribute('points', linePts);
+    investedLine.setAttribute('points', investedPts);
+    area.setAttribute('points', areaPts);
+  }
+
+  [initial, monthly, years, rate].forEach((el) => el.addEventListener('input', compute));
+  compute();
+</script>
