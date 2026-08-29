@@ -11,7 +11,7 @@ import Layout from '../../layouts/Layout.astro';
     </p>
   </header>
 
-  <div class="calc-wrap">
+  <div class="calc-top">
     <div class="calc-controls">
       <div class="calc-field">
         <label for="initial">Začetni vložek</label>
@@ -47,44 +47,40 @@ import Layout from '../../layouts/Layout.astro';
       </div>
     </div>
 
-    <div class="calc-result">
-      <div class="stat-grid" style="margin: 0 0 20px;">
-        <div class="stat">
-          <div class="label">Vloženo skupaj</div>
-          <div class="value mono" id="stat-invested">0 €</div>
-        </div>
-        <div class="stat">
-          <div class="label">Dobiček</div>
-          <div class="value mono" id="stat-profit" style="color: var(--green);">0 €</div>
-        </div>
+    <div class="calc-chart-card">
+      <svg id="calc-chart" viewBox="0 0 720 320" width="100%" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="calcGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.3" />
+            <stop offset="100%" stop-color="#22d3ee" stop-opacity="0" />
+          </linearGradient>
+        </defs>
+        <polygon id="calc-area" points="" fill="url(#calcGrad)" />
+        <polyline id="calc-invested-line" points="" fill="none" stroke="#5b6270" stroke-width="2" stroke-dasharray="5 5" />
+        <polyline id="calc-line" points="" fill="none" stroke="#22d3ee" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+        <line id="calc-hover-line" x1="0" y1="0" x2="0" y2="320" stroke="rgba(255,255,255,0.25)" stroke-width="1" style="display:none;" />
+        <circle id="calc-hover-dot" r="5" fill="#22d3ee" stroke="#07080b" stroke-width="2" style="display:none;" />
+        <rect id="calc-hit-area" x="0" y="0" width="720" height="320" fill="transparent" style="cursor: crosshair;" />
+      </svg>
+      <div class="calc-readout mono" id="calc-readout">
+        <span id="calc-readout-year">Leto 20</span>
+        <span id="calc-readout-value">0 €</span>
       </div>
+    </div>
+  </div>
 
-      <div class="fair-value" style="margin-top: 0;">
-        <h3>Končna vrednost</h3>
-        <div class="range mono" id="stat-total">0 €</div>
-        <p>Ob izbrani donosnosti in rednem mesečnem vlaganju skozi izbrano obdobje.</p>
-      </div>
-
-      <div class="page-spark calc-chart-card">
-        <svg id="calc-chart" viewBox="0 0 720 320" width="100%" preserveAspectRatio="none" aria-hidden="true">
-          <defs>
-            <linearGradient id="calcGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.3" />
-              <stop offset="100%" stop-color="#22d3ee" stop-opacity="0" />
-            </linearGradient>
-          </defs>
-          <polygon id="calc-area" points="" fill="url(#calcGrad)" />
-          <polyline id="calc-invested-line" points="" fill="none" stroke="#5b6270" stroke-width="2" stroke-dasharray="5 5" />
-          <polyline id="calc-line" points="" fill="none" stroke="#22d3ee" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-          <line id="calc-hover-line" x1="0" y1="0" x2="0" y2="320" stroke="rgba(255,255,255,0.25)" stroke-width="1" style="display:none;" />
-          <circle id="calc-hover-dot" r="5" fill="#22d3ee" stroke="#07080b" stroke-width="2" style="display:none;" />
-          <rect id="calc-hit-area" x="0" y="0" width="720" height="320" fill="transparent" style="cursor: crosshair;" />
-        </svg>
-        <div class="calc-readout mono" id="calc-readout">
-          <span id="calc-readout-year">Leto 20</span>
-          <span id="calc-readout-value">0 €</span>
-        </div>
-      </div>
+  <div class="calc-stats-row">
+    <div class="stat">
+      <div class="label">Vloženo skupaj</div>
+      <div class="value mono" id="stat-invested">0 €</div>
+    </div>
+    <div class="stat calc-stat-accent">
+      <div class="label">Končna vrednost</div>
+      <div class="value mono" id="stat-total">0 €</div>
+    </div>
+    <div class="stat">
+      <div class="label">Dobiček</div>
+      <div class="value mono" id="stat-profit" style="color: var(--green);">0 €</div>
     </div>
   </div>
 
