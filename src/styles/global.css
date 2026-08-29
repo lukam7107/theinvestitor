@@ -480,3 +480,79 @@ footer.site .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
 }
 
 .calc-result { display: flex; flex-direction: column; }
+
+/* ── Kalkulator v2 ────────────────────── */
+.calc-field label { font-size: 0.9rem; font-weight: 500; color: var(--text-soft); }
+.calc-input-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-top: 8px;
+  transition: border-color 0.15s ease;
+}
+.calc-input-box:focus-within { border-color: var(--accent2); }
+.calc-prefix { color: var(--text-dim); font-size: 0.95rem; }
+.calc-input-box input[type="number"] {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  font-weight: 600;
+}
+.calc-input-box input[type="number"]::-webkit-outer-spin-button,
+.calc-input-box input[type="number"]::-webkit-inner-spin-button {
+  opacity: 0.5;
+}
+
+.calc-chart-card { position: relative; padding-bottom: 4px; }
+.calc-chart-card svg { display: block; height: 260px; }
+.calc-readout {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 12px 4px 4px;
+  border-top: 1px dashed var(--border);
+  margin-top: 8px;
+  font-size: 0.85rem;
+}
+.calc-readout #calc-readout-year { color: var(--text-dim); }
+.calc-readout #calc-readout-value { color: var(--accent2); font-weight: 700; font-size: 1rem; }
+
+/* ── Homepage kalkulator promo ───────── */
+.calc-promo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  margin-top: 56px;
+  padding: 32px 36px;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  background: linear-gradient(var(--bg-elevated), var(--bg-elevated)) padding-box, var(--gradient) border-box;
+  transition: transform 0.2s ease;
+}
+.calc-promo:hover { transform: translateY(-2px); text-decoration: none; }
+.calc-promo-text .eyebrow { margin-bottom: 14px; }
+.calc-promo-text h2 { font-size: 1.6rem; margin-bottom: 8px; }
+.calc-promo-text p { color: var(--text-soft); font-size: 0.95rem; margin: 0; max-width: 480px; }
+.calc-promo-btn {
+  flex-shrink: 0;
+  background: var(--gradient);
+  color: #07080b;
+  font-weight: 700;
+  font-size: 0.92rem;
+  padding: 12px 22px;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+@media (max-width: 680px) {
+  .calc-promo { flex-direction: column; align-items: flex-start; }
+}

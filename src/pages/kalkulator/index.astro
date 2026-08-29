@@ -14,19 +14,19 @@ import Layout from '../../layouts/Layout.astro';
   <div class="calc-wrap">
     <div class="calc-controls">
       <div class="calc-field">
-        <div class="calc-label-row">
-          <label for="initial">Začetni vložek</label>
-          <span class="calc-out mono" id="initial-out">1.000 €</span>
+        <label for="initial">Začetni vložek</label>
+        <div class="calc-input-box">
+          <span class="calc-prefix mono">€</span>
+          <input type="number" id="initial" min="0" step="50" value="1000" />
         </div>
-        <input type="range" id="initial" min="0" max="20000" step="100" value="1000" />
       </div>
 
       <div class="calc-field">
-        <div class="calc-label-row">
-          <label for="monthly">Mesečni prispevek</label>
-          <span class="calc-out mono" id="monthly-out">100 €</span>
+        <label for="monthly">Mesečni prispevek</label>
+        <div class="calc-input-box">
+          <span class="calc-prefix mono">€</span>
+          <input type="number" id="monthly" min="0" step="10" value="100" />
         </div>
-        <input type="range" id="monthly" min="0" max="1000" step="10" value="100" />
       </div>
 
       <div class="calc-field">
@@ -65,8 +65,8 @@ import Layout from '../../layouts/Layout.astro';
         <p>Ob izbrani donosnosti in rednem mesečnem vlaganju skozi izbrano obdobje.</p>
       </div>
 
-      <div class="page-spark" style="margin-top: 20px;">
-        <svg id="calc-chart" viewBox="0 0 720 220" width="100%" preserveAspectRatio="none" aria-hidden="true">
+      <div class="page-spark calc-chart-card">
+        <svg id="calc-chart" viewBox="0 0 720 320" width="100%" preserveAspectRatio="none" aria-hidden="true">
           <defs>
             <linearGradient id="calcGrad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.3" />
@@ -76,7 +76,14 @@ import Layout from '../../layouts/Layout.astro';
           <polygon id="calc-area" points="" fill="url(#calcGrad)" />
           <polyline id="calc-invested-line" points="" fill="none" stroke="#5b6270" stroke-width="2" stroke-dasharray="5 5" />
           <polyline id="calc-line" points="" fill="none" stroke="#22d3ee" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+          <line id="calc-hover-line" x1="0" y1="0" x2="0" y2="320" stroke="rgba(255,255,255,0.25)" stroke-width="1" style="display:none;" />
+          <circle id="calc-hover-dot" r="5" fill="#22d3ee" stroke="#07080b" stroke-width="2" style="display:none;" />
+          <rect id="calc-hit-area" x="0" y="0" width="720" height="320" fill="transparent" style="cursor: crosshair;" />
         </svg>
+        <div class="calc-readout mono" id="calc-readout">
+          <span id="calc-readout-year">Leto 20</span>
+          <span id="calc-readout-value">0 €</span>
+        </div>
       </div>
     </div>
   </div>
@@ -98,8 +105,6 @@ import Layout from '../../layouts/Layout.astro';
   const years = document.getElementById('years') as HTMLInputElement;
   const rate = document.getElementById('rate') as HTMLInputElement;
 
-  const initialOut = document.getElementById('initial-out')!;
-  const monthlyOut = document.getElementById('monthly-out')!;
   const yearsOut = document.getElementById('years-out')!;
   const rateOut = document.getElementById('rate-out')!;
 
@@ -107,18 +112,33 @@ import Layout from '../../layouts/Layout.astro';
   const statProfit = document.getElementById('stat-profit')!;
   const statTotal = document.getElementById('stat-total')!;
 
+  const svg = document.getElementById('calc-chart') as unknown as SVGSVGElement;
   const area = document.getElementById('calc-area')!;
   const line = document.getElementById('calc-line')!;
   const investedLine = document.getElementById('calc-invested-line')!;
+  const hoverLine = document.getElementById('calc-hover-line')!;
+  const hoverDot = document.getElementById('calc-hover-dot')!;
+  const hitArea = document.getElementById('calc-hit-area')!;
+  const readoutYear = document.getElementById('calc-readout-year')!;
+  const readoutValue = document.getElementById('calc-readout-value')!;
+
+  const W = 720, H = 320, PAD = 8;
+
+  let currentPoints: number[] = [];
+  let currentInvested: number[] = [];
+
+  function toXY(i: number, v: number, maxV: number, n: number) {
+    const x = PAD + (i / (n - 1)) * (W - 2 * PAD);
+    const y = PAD + (1 - v / maxV) * (H - 2 * PAD);
+    return [x, y];
+  }
 
   function compute() {
-    const P = parseFloat(initial.value);
-    const M = parseFloat(monthly.value);
+    const P = Math.max(0, parseFloat(initial.value) || 0);
+    const M = Math.max(0, parseFloat(monthly.value) || 0);
     const Y = parseInt(years.value, 10);
     const R = parseFloat(rate.value) / 100;
 
-    initialOut.textContent = fmt(P);
-    monthlyOut.textContent = fmt(M);
     yearsOut.textContent = `${Y} let`;
     rateOut.textContent = `${rate.value} %`;
 
@@ -145,6 +165,9 @@ import Layout from '../../layouts/Layout.astro';
       investedPoints.push(invested);
     }
 
+    currentPoints = points;
+    currentInvested = investedPoints;
+
     const finalValue = points[points.length - 1];
     const totalInvested = investedPoints[investedPoints.length - 1];
     const profit = finalValue - totalInvested;
@@ -153,24 +176,56 @@ import Layout from '../../layouts/Layout.astro';
     statProfit.textContent = '+' + fmt(profit);
     statTotal.textContent = fmt(finalValue);
 
-    const w = 720, h = 220, pad = 6;
     const maxV = Math.max(...points, 1);
     const n = points.length;
-    const toXY = (i: number, v: number) => {
-      const x = pad + (i / (n - 1)) * (w - 2 * pad);
-      const y = pad + (1 - v / maxV) * (h - 2 * pad);
-      return [x, y];
-    };
-    const linePts = points.map((v, i) => toXY(i, v).join(',')).join(' ');
-    const investedPts = investedPoints.map((v, i) => toXY(i, v).join(',')).join(' ');
-    const firstXY = toXY(0, points[0]);
-    const lastXY = toXY(n - 1, points[n - 1]);
-    const areaPts = `${firstXY[0]},${h} ${linePts} ${lastXY[0]},${h}`;
+    const linePts = points.map((v, i) => toXY(i, v, maxV, n).join(',')).join(' ');
+    const investedPts = investedPoints.map((v, i) => toXY(i, v, maxV, n).join(',')).join(' ');
+    const firstXY = toXY(0, points[0], maxV, n);
+    const lastXY = toXY(n - 1, points[n - 1], maxV, n);
+    const areaPts = `${firstXY[0]},${H} ${linePts} ${lastXY[0]},${H}`;
 
     line.setAttribute('points', linePts);
     investedLine.setAttribute('points', investedPts);
     area.setAttribute('points', areaPts);
+
+    readoutYear.textContent = `Leto ${Y}`;
+    readoutValue.textContent = fmt(finalValue);
   }
+
+  function handleHover(clientX: number) {
+    if (currentPoints.length === 0) return;
+    const rect = svg.getBoundingClientRect();
+    const fracX = (clientX - rect.left) / rect.width;
+    const n = currentPoints.length;
+    let idx = Math.round(fracX * (n - 1));
+    idx = Math.max(0, Math.min(n - 1, idx));
+
+    const maxV = Math.max(...currentPoints, 1);
+    const [x, y] = toXY(idx, currentPoints[idx], maxV, n);
+
+    hoverLine.setAttribute('x1', String(x));
+    hoverLine.setAttribute('x2', String(x));
+    hoverLine.style.display = 'block';
+    hoverDot.setAttribute('cx', String(x));
+    hoverDot.setAttribute('cy', String(y));
+    hoverDot.style.display = 'block';
+
+    readoutYear.textContent = `Leto ${idx}`;
+    readoutValue.textContent = fmt(currentPoints[idx]);
+  }
+
+  hitArea.addEventListener('mousemove', (e: MouseEvent) => handleHover(e.clientX));
+  hitArea.addEventListener('touchmove', (e: TouchEvent) => {
+    if (e.touches[0]) handleHover(e.touches[0].clientX);
+  }, { passive: true });
+  hitArea.addEventListener('mouseleave', () => {
+    hoverLine.style.display = 'none';
+    hoverDot.style.display = 'none';
+    const Y = parseInt(years.value, 10);
+    const finalValue = currentPoints[currentPoints.length - 1];
+    readoutYear.textContent = `Leto ${Y}`;
+    readoutValue.textContent = fmt(finalValue);
+  });
 
   [initial, monthly, years, rate].forEach((el) => el.addEventListener('input', compute));
   compute();
