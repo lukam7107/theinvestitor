@@ -411,6 +411,39 @@ footer.site {
 }
 footer.site .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
 
+/* ── Stock ticker bar ─────────────────── */
+.ticker-bar {
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+}
+.ticker-track {
+  display: inline-flex;
+  align-items: center;
+  animation: ticker-scroll 38s linear infinite;
+}
+.ticker-bar:hover .ticker-track { animation-play-state: paused; }
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 22px;
+  font-size: 0.8rem;
+  border-right: 1px solid var(--border);
+}
+.ticker-sym { color: var(--text); font-weight: 700; }
+.ticker-price { color: var(--text-soft); }
+.ticker-chg { display: inline-flex; align-items: center; gap: 3px; font-weight: 600; }
+.ticker-chg.up { color: var(--green); }
+.ticker-chg.down { color: var(--red); }
+.ticker-chg .arrow { font-size: 0.65rem; }
+
 /* ── Kalkulator ──────────────────────── */
 .calc-top {
   display: grid;

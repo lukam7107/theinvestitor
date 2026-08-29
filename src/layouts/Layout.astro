@@ -1,12 +1,14 @@
 ---
 import '../styles/global.css';
+import StockTicker from '../components/StockTicker.astro';
 
 interface Props {
   title: string;
   description?: string;
+  showTicker?: boolean;
 }
 
-const { title, description = 'Poglobljene analize delnic v slovenščini — brez šuma, brez hype-a.' } = Astro.props;
+const { title, description = 'Poglobljene analize delnic v slovenščini — brez šuma, brez hype-a.', showTicker = false } = Astro.props;
 ---
 <!doctype html>
 <html lang="sl">
@@ -18,6 +20,7 @@ const { title, description = 'Poglobljene analize delnic v slovenščini — bre
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   </head>
   <body>
+    {showTicker && <StockTicker />}
     <nav class="nav">
       <div class="wrap">
         <a class="brand" href="/">the<span>investitor</span></a>

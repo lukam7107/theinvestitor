@@ -1,0 +1,66 @@
+---
+const stocks = [
+  { t: 'TSLA', name: 'Tesla', price: 245.32, chg: 1.24 },
+  { t: 'AAPL', name: 'Apple', price: 228.51, chg: -0.38 },
+  { t: 'MSFT', name: 'Microsoft', price: 415.22, chg: 0.61 },
+  { t: 'NVDA', name: 'Nvidia', price: 132.84, chg: 2.05 },
+  { t: 'GOOGL', name: 'Alphabet', price: 175.43, chg: -0.15 },
+  { t: 'AMZN', name: 'Amazon', price: 186.92, chg: 0.94 },
+  { t: 'META', name: 'Meta', price: 590.14, chg: -1.02 },
+  { t: 'NFLX', name: 'Netflix', price: 712.55, chg: 0.47 },
+];
+---
+<div class="ticker-bar" aria-hidden="true">
+  <div class="ticker-track" id="ticker-track">
+    {[0, 1].map(() => (
+      stocks.map((s) => (
+        <span class="ticker-item" data-ticker={s.t} data-open={s.price}>
+          <span class="ticker-sym mono">{s.t}</span>
+          <span class="ticker-price mono">{s.price.toFixed(2)}</span>
+          <span class={`ticker-chg mono ${s.chg >= 0 ? 'up' : 'down'}`}>
+            <span class="arrow">{s.chg >= 0 ? '▲' : '▼'}</span><span class="pct">{Math.abs(s.chg).toFixed(2)}%</span>
+          </span>
+        </span>
+      ))
+    ))}
+  </div>
+</div>
+
+<script>
+  const items = document.querySelectorAll('.ticker-item') as NodeListOf<HTMLElement>;
+  const state = new Map<string, { open: number; current: number }>();
+
+  items.forEach((el) => {
+    const t = el.dataset.ticker!;
+    if (!state.has(t)) {
+      const open = parseFloat(el.dataset.open!);
+      state.set(t, { open, current: open });
+    }
+  });
+
+  function tick() {
+    state.forEach((s, ticker) => {
+      const deltaPct = (Math.random() - 0.48) * 0.35;
+      s.current = Math.max(1, s.current * (1 + deltaPct / 100));
+
+      const chgPct = ((s.current - s.open) / s.open) * 100;
+      const up = chgPct >= 0;
+
+      document.querySelectorAll(`.ticker-item[data-ticker="${ticker}"]`).forEach((el) => {
+        const priceEl = el.querySelector('.ticker-price');
+        const chgEl = el.querySelector('.ticker-chg') as HTMLElement | null;
+        const arrowEl = el.querySelector('.arrow');
+        const pctEl = el.querySelector('.pct');
+        if (priceEl) priceEl.textContent = s.current.toFixed(2);
+        if (chgEl) {
+          chgEl.classList.toggle('up', up);
+          chgEl.classList.toggle('down', !up);
+        }
+        if (arrowEl) arrowEl.textContent = up ? '▲' : '▼';
+        if (pctEl) pctEl.textContent = `${Math.abs(chgPct).toFixed(2)}%`;
+      });
+    });
+  }
+
+  setInterval(tick, 2200);
+</script>

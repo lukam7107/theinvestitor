@@ -7,7 +7,7 @@ const analize = (await getCollection('analize')).sort(
   (a, b) => b.data.datum.valueOf() - a.data.datum.valueOf()
 );
 ---
-<Layout title="Domov">
+<Layout title="Domov" showTicker={true}>
   <section class="hero-split">
     <div class="hero">
       <span class="eyebrow">Delniške analize v slovenščini</span>
