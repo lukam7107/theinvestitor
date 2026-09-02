@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import StockTicker from '../components/StockTicker.astro';
+import NewsletterForm from '../components/NewsletterForm.astro';
 
 interface Props {
   title: string;
@@ -37,6 +38,7 @@ const { title, description = 'Poglobljene analize delnic v slovenščini — bre
     <footer class="site">
       <div class="wrap">
         © {new Date().getFullYear()} TheInvestitor. Vsebina je informativne narave in ne predstavlja investicijskega nasveta.
+        <NewsletterForm variant="compact" />
       </div>
     </footer>
   </body>

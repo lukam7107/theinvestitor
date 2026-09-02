@@ -444,6 +444,76 @@ footer.site .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
 .ticker-chg.down { color: var(--red); }
 .ticker-chg .arrow { font-size: 0.65rem; }
 
+/* ── Newsletter ───────────────────────── */
+.newsletter-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  margin-top: 24px;
+  padding: 32px 36px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+.newsletter-text .eyebrow { margin-bottom: 14px; }
+.newsletter-text h2 { font-size: 1.5rem; margin-bottom: 8px; }
+.newsletter-text p { color: var(--text-soft); font-size: 0.95rem; margin: 0; max-width: 420px; }
+.newsletter-form {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.newsletter-form input[type="email"] {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  min-width: 220px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+.newsletter-form input[type="email"]:focus { border-color: var(--accent2); }
+.newsletter-form button {
+  background: var(--gradient);
+  color: #07080b;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 12px 20px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+@media (max-width: 680px) {
+  .newsletter-box { flex-direction: column; align-items: flex-start; }
+  .newsletter-form { width: 100%; }
+  .newsletter-form input[type="email"] { flex: 1; min-width: 0; }
+}
+
+.newsletter-compact {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+.newsletter-compact-label { color: var(--text-dim); font-size: 0.82rem; }
+.newsletter-compact .newsletter-form input[type="email"] {
+  min-width: 180px;
+  padding: 8px 12px;
+  font-size: 0.82rem;
+}
+.newsletter-compact .newsletter-form button {
+  padding: 8px 14px;
+  font-size: 0.82rem;
+}
+
 /* ── Kalkulator ──────────────────────── */
 .calc-top {
   display: grid;

@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Sparkline from '../components/Sparkline.astro';
+import NewsletterForm from '../components/NewsletterForm.astro';
 import { getCollection } from 'astro:content';
 
 const analize = (await getCollection('analize')).sort(
@@ -85,4 +86,6 @@ const analize = (await getCollection('analize')).sort(
     </div>
     <span class="calc-promo-btn">Odpri kalkulator →</span>
   </a>
+
+  <NewsletterForm />
 </Layout>

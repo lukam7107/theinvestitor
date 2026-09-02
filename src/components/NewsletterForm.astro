@@ -1,0 +1,40 @@
+---
+interface Props {
+  variant?: 'full' | 'compact';
+}
+const { variant = 'full' } = Astro.props;
+const BUTTONDOWN_USERNAME = 'theinvestitor';
+---
+{variant === 'full' ? (
+  <div class="newsletter-box">
+    <div class="newsletter-text">
+      <span class="eyebrow">Ostani na tekočem</span>
+      <h2>Nove analize naravnost v nabiralnik</h2>
+      <p>Vsako nedeljo pred novim tednom — kratek pregled in nove analize, brez spama.</p>
+    </div>
+    <form
+      class="newsletter-form"
+      action={`https://buttondown.com/api/emails/embed-subscribe/${BUTTONDOWN_USERNAME}`}
+      method="post"
+      target="popupwindow"
+      onsubmit={`window.open('https://buttondown.com/${BUTTONDOWN_USERNAME}', 'popupwindow')`}
+    >
+      <input type="email" name="email" placeholder="tvoj@email.com" required />
+      <button type="submit">Prijava →</button>
+    </form>
+  </div>
+) : (
+  <div class="newsletter-compact">
+    <span class="newsletter-compact-label">Nove analize v nabiralnik:</span>
+    <form
+      class="newsletter-form"
+      action={`https://buttondown.com/api/emails/embed-subscribe/${BUTTONDOWN_USERNAME}`}
+      method="post"
+      target="popupwindow"
+      onsubmit={`window.open('https://buttondown.com/${BUTTONDOWN_USERNAME}', 'popupwindow')`}
+    >
+      <input type="email" name="email" placeholder="tvoj@email.com" required />
+      <button type="submit">Prijava</button>
+    </form>
+  </div>
+)}
