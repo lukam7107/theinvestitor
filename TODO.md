@@ -1,21 +1,22 @@
 # TODO — odprte zadeve
 
-## 1. Pravi stock ticker (namesto simuliranega)
+## 1. Pravi stock ticker (namesto simuliranega) — ✅ NAREJENO
 
-Trenutno `src/components/StockTicker.astro` prikazuje simulirane (nepravé) cene, ki se
-naključno premikajo. Dogovorjeno: zamenjati z dejanskimi tržnimi podatki preko
-**Finnhub API**, s ključem skritim v Vercel serverless funkciji (ne v kodi/repoju).
+`StockTicker.astro` zdaj kliče `/api/ticker` (server-side Finnhub endpoint, 30s cache).
+Deployano in preverjeno, da vrača prave cene.
 
-Plan izvedbe (ko bomo nadaljevali):
+**⚠️ NUJNO pred 1.10.2026:** Vercel je Node.js 20 runtime označil kot deprecated in
+gradnje z Node 20 po tem datumu ne bodo več delovale. Trenutna verzija adapterja
+(`@astrojs/vercel@7.8.2`, zadnja, ki še podpira Astro 4) ne pozna Node 22/24 in bi se
+brez ročne nastavitve vrnila na neveljaven `nodejs18.x` runtime. Zato je Vercel projekt
+→ Settings → General → Node.js Version ročno nastavljen na **20.x** kot začasna rešitev.
 
-1. **Ti narediš:** registracija na [finnhub.io/register](https://finnhub.io/register) (brezplačen tier), pridobiš API ključ.
-2. **Ti narediš:** v Vercel projektu → Settings → Environment Variables → dodaš `FINNHUB_API_KEY` = tvoj ključ.
-3. **Jaz naredim:**
-   - Dodam `@astrojs/vercel` adapter v `astro.config.mjs`, `output: 'hybrid'` (vse strani ostanejo statične, samo API endpoint je server-side)
-   - Ustvarim `src/pages/api/ticker.ts` — server-side endpoint, ki pokliče Finnhub za 8 tickerjev (TSLA, AAPL, MSFT, NVDA, GOOGL, AMZN, META, NFLX), s cache-anjem (30s), da ne prekoračimo brezplačnega rate limita (60 klicev/min)
-   - Posodobim `StockTicker.astro` client script, da namesto naključne simulacije kliče `/api/ticker` vsakih ~30-60s in prikaže prave cene
-   - Dodam `.env` v `.gitignore` (ključ nikoli ne gre v git repo)
-4. Push, deploy, preverimo da dela na živi strani.
+Pred oktobrom 2026 je treba:
+- Nadgraditi na Astro 5 + `@astrojs/vercel@8.x` (ki podpira novejše Node verzije), ALI
+- Preveriti, ali je izšla novejša verzija adapterja za Astro 4 z popravljeno Node-version
+  detekcijo, ki pravilno prepozna Node 22/24.
+
+Brez tega ukrepa bo ticker (in vsak drug server-side endpoint) prenehal delovati.
 
 ## 2. Ostalo iz prejšnjega pogovora (ni nujno v tem vrstnem redu)
 
