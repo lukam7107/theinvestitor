@@ -27,40 +27,42 @@ const stocks = [
 </div>
 
 <script>
-  const items = document.querySelectorAll('.ticker-item') as NodeListOf<HTMLElement>;
-  const state = new Map<string, { open: number; current: number }>();
+  interface TickerQuote {
+    t: string;
+    price: number;
+    chg: number;
+  }
 
-  items.forEach((el) => {
-    const t = el.dataset.ticker!;
-    if (!state.has(t)) {
-      const open = parseFloat(el.dataset.open!);
-      state.set(t, { open, current: open });
-    }
-  });
+  const POLL_MS = 45_000;
 
-  function tick() {
-    state.forEach((s, ticker) => {
-      const deltaPct = (Math.random() - 0.48) * 0.35;
-      s.current = Math.max(1, s.current * (1 + deltaPct / 100));
-
-      const chgPct = ((s.current - s.open) / s.open) * 100;
-      const up = chgPct >= 0;
-
-      document.querySelectorAll(`.ticker-item[data-ticker="${ticker}"]`).forEach((el) => {
-        const priceEl = el.querySelector('.ticker-price');
-        const chgEl = el.querySelector('.ticker-chg') as HTMLElement | null;
-        const arrowEl = el.querySelector('.arrow');
-        const pctEl = el.querySelector('.pct');
-        if (priceEl) priceEl.textContent = s.current.toFixed(2);
-        if (chgEl) {
-          chgEl.classList.toggle('up', up);
-          chgEl.classList.toggle('down', !up);
-        }
-        if (arrowEl) arrowEl.textContent = up ? '▲' : '▼';
-        if (pctEl) pctEl.textContent = `${Math.abs(chgPct).toFixed(2)}%`;
-      });
+  function applyQuote(q: TickerQuote) {
+    document.querySelectorAll(`.ticker-item[data-ticker="${q.t}"]`).forEach((el) => {
+      const up = q.chg >= 0;
+      const priceEl = el.querySelector('.ticker-price');
+      const chgEl = el.querySelector('.ticker-chg') as HTMLElement | null;
+      const arrowEl = el.querySelector('.arrow');
+      const pctEl = el.querySelector('.pct');
+      if (priceEl) priceEl.textContent = q.price.toFixed(2);
+      if (chgEl) {
+        chgEl.classList.toggle('up', up);
+        chgEl.classList.toggle('down', !up);
+      }
+      if (arrowEl) arrowEl.textContent = up ? '▲' : '▼';
+      if (pctEl) pctEl.textContent = `${Math.abs(q.chg).toFixed(2)}%`;
     });
   }
 
-  setInterval(tick, 2200);
+  async function refresh() {
+    try {
+      const res = await fetch('/api/ticker');
+      if (!res.ok) return;
+      const quotes: TickerQuote[] = await res.json();
+      quotes.forEach(applyQuote);
+    } catch {
+      // tiho ignoriramo napake - obdrži zadnje prikazane vrednosti
+    }
+  }
+
+  refresh();
+  setInterval(refresh, POLL_MS);
 </script>
