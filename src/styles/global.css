@@ -141,7 +141,7 @@ main { max-width: 1080px; margin: 0 auto; padding: 18px 24px 100px; }
 /* ── Hero ────────────────────────────── */
 .hero-split {
   display: grid;
-  grid-template-columns: 1.2fr 1fr;
+  grid-template-columns: 1fr 1.15fr;
   gap: 40px;
   align-items: center;
   padding-bottom: 20px;
@@ -194,7 +194,7 @@ main { max-width: 1080px; margin: 0 auto; padding: 18px 24px 100px; }
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 24px;
+  padding: 30px;
 }
 
 /* ── Sections ────────────────────────── */
