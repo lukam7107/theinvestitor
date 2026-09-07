@@ -32,7 +32,7 @@ Brez tega ukrepa bo ticker (in vsak drug server-side endpoint) prenehal delovati
 - Instagram račun + prvi posti (carousel format iz analiz)
 - Objava v slovenskih investicijskih skupinah/forumih ob lansiranju
 - **Privacy policy** — pomembno (GDPR); vsebina je pripravljena, uporabnik jo je za zdaj odložil ("mogoče kasneje")
-- **Vercel Analytics** — vgrajen, brezplačen nivo, ena vrstica kode. Brez tega ne veš ali promocija deluje (koliko obiskovalcev, od kod, koliko se prijavi na newsletter)
+- ✅ **Vercel Analytics** — koda dodana (`@vercel/analytics/astro`). Po pushu še: Vercel dashboard → projekt → zavihek **Analytics** → Enable (brezplačen nivo)
 - Affiliate linki (IBKR / Trading212) — ni nujno za lansiranje, del kasnejše monetizacije
 
 ## 3. Grafike / vizualije za naprej
