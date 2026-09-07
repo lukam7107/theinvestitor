@@ -25,7 +25,7 @@ bearCase:
 Tu napiši razčlenitev poslovnega modela (business breakdown): kaj podjetje počne,
 kako služi denar, konkurenčna prednost, panoga, management ipd.
 
-Snapshot tabela, Bull/Bear tabela, Claude Fair Value box in Disclaimer se
+Snapshot tabela, Bull/Bear tabela, TheInvestitor Fair Value box in Disclaimer se
 generirajo avtomatsko iz zgornjih frontmatter podatkov — v telo datoteke napišeš
 samo poslovni breakdown.
 

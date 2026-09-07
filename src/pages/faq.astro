@@ -1,0 +1,50 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const faqs = [
+  {
+    q: 'Ali je vsebina na strani investicijski nasvet?',
+    a: 'Ne. Vsebina je izključno informativne in izobraževalne narave ter ne predstavlja individualiziranega investicijskega priporočila. Vsaka odločitev je izključno vaša lastna odgovornost. Priporočamo, da se pred vsako pomembnejšo finančno odločitvijo posvetujete z licenciranim finančnim svetovalcem.',
+  },
+  {
+    q: 'Kako izračunate "TheInvestitor Fair Value"?',
+    a: 'TheInvestitor Fair Value je naša lastna ocena razpona poštene vrednosti delnice, izračunana na podlagi javno dostopnih finančnih podatkov podjetja in standardnih metod vrednotenja (npr. diskontirani denarni tokovi, primerjalno vrednotenje). Gre za oceno, ne za natančno napoved — dejanska tržna cena lahko odstopa v obe smeri.',
+  },
+  {
+    q: 'Kdo stoji za TheInvestitor?',
+    a: 'TheInvestitor je samostojen projekt enega avtorja — brez uredništva, investitorjev ali oglaševalskih pritiskov. Cilj je preprost: prinesti poglobljene, pregledne analize delnic v slovenščini, ker jih trenutno skoraj ni.',
+  },
+  {
+    q: 'Kako pogosto izidejo nove analize?',
+    a: 'Trenutno ciljamo na približno eno novo analizo tedensko, odvisno od kompleksnosti podjetja. Naročniki e-novic dobijo obvestilo takoj, ko je nova analiza objavljena.',
+  },
+  {
+    q: 'Je uporaba strani brezplačna?',
+    a: 'Da, trenutno je vsa vsebina na strani — analize in kalkulator — popolnoma brezplačna.',
+  },
+  {
+    q: 'Zakaj je stran v slovenščini in ne v angleščini?',
+    a: 'Ker je skoraj vsa kvalitetna investicijska vsebina že v angleščini, medtem ko slovenski in balkanski retail investitorji težko najdejo poglobljeno analizo v svojem jeziku. TheInvestitor zapolnjuje prav to vrzel.',
+  },
+  {
+    q: 'Kako se prijavim na e-novice?',
+    a: 'S poljem za email na dnu vsake strani ali na domači strani — dobiš obvestilo ob vsaki novi analizi.',
+  },
+  {
+    q: 'Ali lahko predlagam delnico za analizo?',
+    a: 'Da — predlog pošlji na info@theinvestitor.com. Ne obljubljam, da bo analiziran prav vsak predlog, a vsak predlog upoštevam pri načrtovanju naslednjih analiz.',
+  },
+];
+---
+<Layout title="Pogosta vprašanja" description="Odgovori na pogosta vprašanja o TheInvestitor — analizah, Fair Value oceni in projektu.">
+  <h1>Pogosta vprašanja</h1>
+  <p class="faq-intro">Vse, kar bi te utegnilo zanimati o TheInvestitor.</p>
+  <div class="faq">
+    {faqs.map((item, i) => (
+      <details class="faq-item" open={i === 0}>
+        <summary>{item.q}</summary>
+        <p>{item.a}</p>
+      </details>
+    ))}
+  </div>
+</Layout>
