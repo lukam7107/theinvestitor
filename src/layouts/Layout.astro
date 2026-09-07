@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import StockTicker from '../components/StockTicker.astro';
 import NewsletterForm from '../components/NewsletterForm.astro';
+import Analytics from '@vercel/analytics/astro';
 
 interface Props {
   title: string;
@@ -19,6 +20,7 @@ const { title, description = 'Poglobljene analize delnic v slovenščini — bre
     <meta name="description" content={description} />
     <title>{title} — TheInvestitor</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <Analytics />
   </head>
   <body>
     {showTicker && <StockTicker />}
