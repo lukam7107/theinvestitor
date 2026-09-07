@@ -20,14 +20,17 @@ Brez tega ukrepa bo ticker (in vsak drug server-side endpoint) prenehal delovati
 
 ## 2. Ostalo iz prejšnjega pogovora (ni nujno v tem vrstnem redu)
 
-- Zamenjava treh demo/placeholder analiz (XE, SIVE, SPCX) z dejansko vsebino
+- ✅ **FAQ stran** — narejeno (`/faq`, 8 vprašanj, nav link dodan)
+- ✅ **Preimenovanje** — "Claude Fair Value" → "TheInvestitor Fair Value" po celi strani
+- ✅ **Mobilni hamburger meni** — narejeno, nav se pod 680px skrije za hamburger ikono
+- ✅ **Nov hero naslov + animiran graf** na domači strani
+- Zamenjava treh demo/placeholder analiz (XE, SIVE, SPCX) z dejansko vsebino — čaka na izbor delnic
 - Social share kartice (og:image) za lepši prikaz linkov na Instagram/X
 - `sitemap.xml` za SEO
 - Testni pošlji newsletter (preveriti celo verigo prijava → Buttondown → email)
 - Instagram račun + prvi posti (carousel format iz analiz)
 - Objava v slovenskih investicijskih skupinah/forumih ob lansiranju
-- **FAQ stran** — "Ali je to investicijski nasvet?", "Kako izračunate Claude Fair Value?", "Kdo stoji za TheInvestitor?", "Kako pogosto izidejo nove analize?"
-- **Privacy policy** — pomembno (GDPR), ker se zbirajo emaili preko newsletterja od EU/slovenskih uporabnikov
+- **Privacy policy** — pomembno (GDPR); vsebina je pripravljena, uporabnik jo je za zdaj odložil ("mogoče kasneje")
 - **Kontakt stran** — viden `info@theinvestitor.com`, morda enostaven kontakt obrazec
 - **Vercel Analytics** — vgrajen, brezplačen nivo, ena vrstica kode. Brez tega ne veš ali promocija deluje (koliko obiskovalcev, od kod, koliko se prijavi na newsletter)
 - Affiliate linki (IBKR / Trading212) — ni nujno za lansiranje, del kasnejše monetizacije
