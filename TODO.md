@@ -18,7 +18,14 @@ Pred oktobrom 2026 je treba:
 
 Brez tega ukrepa bo ticker (in vsak drug server-side endpoint) prenehal delovati.
 
-## 2. Ostalo iz prejšnjega pogovora (ni nujno v tem vrstnem redu)
+## 2. Stalen opomnik
+
+- 📌 **Ob vsaki novi objavi** (nova analiza, nova stran) ročno prijavi spremembo v
+  Google Search Console (Sitemaps → ponovno oddaj sitemap, ali URL Inspection →
+  Request Indexing za konkretno stran) — pospeši prvo indeksiranje namesto da čakaš,
+  da jo Google sam najde.
+
+## 3. Ostalo iz prejšnjega pogovora (ni nujno v tem vrstnem redu)
 
 - ✅ **FAQ stran** — narejeno (`/faq`, 8 vprašanj, nav link dodan)
 - ✅ **Preimenovanje** — "Claude Fair Value" → "TheInvestitor Fair Value" po celi strani
@@ -35,7 +42,7 @@ Brez tega ukrepa bo ticker (in vsak drug server-side endpoint) prenehal delovati
 - ✅ **Vercel Analytics** — koda dodana (`@vercel/analytics/astro`). Po pushu še: Vercel dashboard → projekt → zavihek **Analytics** → Enable (brezplačen nivo)
 - Affiliate linki (IBKR / Trading212) — ni nujno za lansiranje, del kasnejše monetizacije
 
-## 3. Grafike / vizualije za naprej
+## 4. Grafike / vizualije za naprej
 
 - **Dinamični og:image generator** — avtomatska social-share slika za vsako analizo (ticker, fair value, brand barve), npr. z `@vercel/og` — namesto ene statične slike za celo stran
 - **Instagram template sistem** — ponovljiv dizajn za carousel poste (quote kartice, stat kartice) v istem vizualnem jeziku kot stran
