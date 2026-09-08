@@ -27,7 +27,7 @@ Brez tega ukrepa bo ticker (in vsak drug server-side endpoint) prenehal delovati
 - ✅ **Kontakt stran** — `/kontakt`, viden info@theinvestitor.com, nav link dodan
 - Zamenjava treh demo/placeholder analiz (XE, SIVE, SPCX) z dejansko vsebino — čaka na izbor delnic
 - Social share kartice (og:image) za lepši prikaz linkov na Instagram/X
-- ✅ **sitemap.xml** — dodano (`@astrojs/sitemap` + `robots.txt`), preveriti po deployu na theinvestitor.com/sitemap-index.xml
+- ✅ **sitemap.xml** — dodano in preverjeno na theinvestitor.com/sitemap-index.xml (pinano na `@astrojs/sitemap@3.2.1`, ker novejše 3.7.x verzije zahtevajo Astro 5 in crashajo build)
 - Testni pošlji newsletter (preveriti celo verigo prijava → Buttondown → email)
 - Instagram račun + prvi posti (carousel format iz analiz)
 - Objava v slovenskih investicijskih skupinah/forumih ob lansiranju
