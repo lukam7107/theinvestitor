@@ -33,6 +33,7 @@ Brez tega ukrepa bo ticker (in vsak drug server-side endpoint) prenehal delovati
 - ✅ **Nov hero naslov + animiran graf** na domači strani (viden zdaj tudi na mobilnem)
 - ✅ **Kontakt stran** — `/kontakt`, viden info@theinvestitor.com, nav link dodan
 - ✅ **Zamenjava treh demo/placeholder analiz** — XE, SIVE, SPCX-demo zamenjani z resnično vsebino: Tyler Technologies (TYL), SpaceX (SPCX), Palantir (PLTR)
+- ✅ **Interaktiven graf cene na analizah** — pravi zgodovinski podatki (Yahoo Finance, ker Finnhub free ne omogoča candle/zgodovine), premik miške/prsta pokaže datum + ceno; poleg "Potencial" dodana razlaga, kaj številka pomeni
 - Social share kartice (og:image) za lepši prikaz linkov na Instagram/X
 - ✅ **sitemap.xml** — dodano in preverjeno na theinvestitor.com/sitemap-index.xml (pinano na `@astrojs/sitemap@3.2.1`, ker novejše 3.7.x verzije zahtevajo Astro 5 in crashajo build)
 - Testni pošlji newsletter (preveriti celo verigo prijava → Buttondown → email)
