@@ -1,0 +1,142 @@
+---
+// Interaktivni graf gibanja cene — poskusi naložiti resnične zgodovinske podatke
+// (Yahoo Finance prek /api/history), z hover/touch odčitavanjem datuma in cene.
+// Če podatki niso na voljo, ostane viden statični Sparkline (brez hover-a).
+import Sparkline from './Sparkline.astro';
+
+interface Props {
+  ticker: string;
+  cena: number;
+  valuta: string;
+  up: boolean;
+}
+
+const { ticker, cena, valuta, up } = Astro.props;
+const containerId = `price-chart-${ticker.toLowerCase()}`;
+const fmtCena = cena.toFixed(2);
+---
+<div class="price-chart-card" id={containerId} data-ticker={ticker} data-cena={fmtCena} data-valuta={valuta} data-up={up ? '1' : '0'}>
+  <div class="pc-head">
+    <span class="pc-title">Gibanje cene — zadnjih 6 mesecev</span>
+    <span class="pc-readout mono" data-role="readout">
+      <span data-role="readout-date">danes</span>
+      <span class="pc-sep">—</span>
+      <span data-role="readout-price">{fmtCena} {valuta}</span>
+    </span>
+  </div>
+
+  <div class="pc-body" data-role="body">
+    <div class="pc-fallback" data-role="fallback">
+      <Sparkline seed={ticker} up={up} width={720} height={140} />
+    </div>
+  </div>
+
+  <div class="pc-legend mono" data-role="legend" hidden>
+    <span data-role="legend-start"></span>
+    <span>danes</span>
+  </div>
+  <p class="pc-hint" data-role="hint" hidden>Premakni miško (ali prst) čez graf za natančen datum in ceno na tisti dan.</p>
+</div>
+
+<script define:vars={{ containerId, ticker }}>
+  (function () {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const readoutDate = container.querySelector('[data-role="readout-date"]');
+    const readoutPrice = container.querySelector('[data-role="readout-price"]');
+    const body = container.querySelector('[data-role="body"]');
+    const legend = container.querySelector('[data-role="legend"]');
+    const legendStart = container.querySelector('[data-role="legend-start"]');
+    const hint = container.querySelector('[data-role="hint"]');
+    const valuta = container.dataset.valuta;
+
+    const fmtSl = (isoDate) => {
+      const d = new Date(isoDate + 'T00:00:00');
+      return d.toLocaleDateString('sl-SI', { day: 'numeric', month: 'short', year: 'numeric' });
+    };
+
+    fetch(`/api/history?symbol=${encodeURIComponent(ticker)}`)
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error('bad status'))))
+      .then((points) => {
+        if (!Array.isArray(points) || points.length < 2) throw new Error('premalo podatkov');
+
+        const prices = points.map((p) => p.price);
+        const dates = points.map((p) => p.date);
+        const min = Math.min(...prices);
+        const max = Math.max(...prices);
+        const span = max - min || 1;
+        const W = 720, H = 140, PAD = 4;
+        const up = prices[prices.length - 1] >= prices[0];
+        const color = up ? '#2fe08a' : '#ff5c72';
+        const gradId = 'pcgrad-' + ticker.toLowerCase();
+
+        const xAt = (i) => PAD + (i / (points.length - 1)) * (W - 2 * PAD);
+        const yAt = (v) => PAD + (1 - (v - min) / span) * (H - 2 * PAD);
+
+        const linePts = prices.map((v, i) => `${xAt(i).toFixed(1)},${yAt(v).toFixed(1)}`).join(' ');
+        const areaPts = `${PAD},${H} ${linePts} ${(W - PAD).toFixed(1)},${H}`;
+
+        body.innerHTML = `
+          <svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" preserveAspectRatio="none"
+               role="img" aria-label="Graf gibanja cene ${ticker} v zadnjih 6 mesecih" style="display:block; cursor: crosshair;">
+            <defs>
+              <linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="${color}" stop-opacity="0.22" />
+                <stop offset="100%" stop-color="${color}" stop-opacity="0" />
+              </linearGradient>
+            </defs>
+            <polygon points="${areaPts}" fill="url(#${gradId})"></polygon>
+            <polyline points="${linePts}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+            <line data-el="guide" x1="0" y1="0" x2="0" y2="${H}" stroke="rgba(255,255,255,0.28)" stroke-width="1" stroke-dasharray="3,3" opacity="0"></line>
+            <circle data-el="dot" r="3.5" fill="${color}" opacity="0"></circle>
+            <rect data-el="hit" x="0" y="0" width="${W}" height="${H}" fill="transparent" style="touch-action:none;"></rect>
+          </svg>
+        `;
+
+        const svg = body.querySelector('svg');
+        const guide = body.querySelector('[data-el="guide"]');
+        const dot = body.querySelector('[data-el="dot"]');
+        const hit = body.querySelector('[data-el="hit"]');
+
+        function showAt(idx) {
+          idx = Math.max(0, Math.min(points.length - 1, idx));
+          const x = xAt(idx);
+          const y = yAt(prices[idx]);
+          guide.setAttribute('x1', x);
+          guide.setAttribute('x2', x);
+          guide.setAttribute('opacity', '1');
+          dot.setAttribute('cx', x);
+          dot.setAttribute('cy', y);
+          dot.setAttribute('opacity', '1');
+          readoutDate.textContent = fmtSl(dates[idx]);
+          readoutPrice.textContent = `${prices[idx].toFixed(2)} ${valuta}`;
+        }
+
+        function reset() {
+          guide.setAttribute('opacity', '0');
+          dot.setAttribute('opacity', '0');
+          readoutDate.textContent = 'danes';
+          readoutPrice.textContent = `${prices[prices.length - 1].toFixed(2)} ${valuta}`;
+        }
+
+        function pointerToIdx(clientX) {
+          const rect = svg.getBoundingClientRect();
+          const frac = (clientX - rect.left) / rect.width;
+          return Math.round(frac * (points.length - 1));
+        }
+
+        hit.addEventListener('pointermove', (e) => showAt(pointerToIdx(e.clientX)));
+        hit.addEventListener('pointerdown', (e) => showAt(pointerToIdx(e.clientX)));
+        hit.addEventListener('pointerleave', reset);
+
+        legendStart.textContent = fmtSl(dates[0]);
+        legend.hidden = false;
+        hint.hidden = false;
+        reset();
+      })
+      .catch(() => {
+        // Zgodovina ni na voljo — pusti statični fallback graf brez hover-a.
+      });
+  })();
+</script>

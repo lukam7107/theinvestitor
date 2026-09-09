@@ -313,6 +313,68 @@ a.card p { color: var(--text-soft); font-size: 0.93rem; margin: 0; }
   margin-bottom: 8px;
 }
 .stat .value { font-weight: 700; font-size: 1.2rem; font-family: 'Space Grotesk', sans-serif; }
+.stat .label-row { display: flex; align-items: center; gap: 5px; margin-bottom: 8px; }
+.stat .label-row .label { margin-bottom: 0; }
+.info-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid var(--text-dim);
+  color: var(--text-dim);
+  font-size: 0.6rem;
+  font-family: 'JetBrains Mono', monospace;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  flex-shrink: 0;
+  cursor: help;
+}
+.potencial-hint {
+  max-width: 780px;
+  color: var(--text-dim);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  margin: -18px 0 8px;
+}
+.potencial-hint em { color: var(--text-soft); font-style: normal; }
+
+/* ── Interaktivni graf cene ────────────── */
+.price-chart-card {
+  max-width: 780px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px 14px;
+  margin: 28px 0 8px;
+}
+.pc-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.pc-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.pc-readout { font-size: 0.85rem; color: var(--text); }
+.pc-readout .pc-sep { color: var(--text-dim); margin: 0 5px; }
+.pc-body { position: relative; }
+.pc-legend {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  margin-top: 6px;
+}
+.pc-hint { font-size: 0.76rem; color: var(--text-dim); margin: 8px 0 0; }
 
 .prose { max-width: 740px; color: var(--text-soft); }
 .prose h2 {

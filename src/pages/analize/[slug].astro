@@ -1,6 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import Sparkline from '../../components/Sparkline.astro';
+import PriceChart from '../../components/PriceChart.astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -42,9 +42,7 @@ const pct = (v: number) => ((v - scaleMin) / (scaleMax - scaleMin)) * 100;
     <p class="date">Objavljeno: {fmtDate}</p>
   </header>
 
-  <div class="page-spark">
-    <Sparkline seed={d.ticker} up={up} width={720} height={120} />
-  </div>
+  <PriceChart ticker={d.ticker} cena={d.cena} valuta={d.valuta} up={up} />
 
   <div class="stat-grid">
     <div class="stat">
@@ -60,12 +58,21 @@ const pct = (v: number) => ((v - scaleMin) / (scaleMax - scaleMin)) * 100;
       <div class="value" style="color: var(--accent2);">{d.fairValueMin}–{d.fairValueMax}</div>
     </div>
     <div class="stat">
-      <div class="label">Potencial</div>
+      <div class="label-row">
+        <div class="label">Potencial</div>
+        <span class="info-dot" title="Razlika med trenutno ceno in sredino našega Fair Value razpona — ni napoved gibanja cene, ampak ocena podcenjenosti ali precenjenosti.">i</span>
+      </div>
       <div class="value" style={`color: var(--${up ? 'green' : 'red'});`}>
         {upside >= 0 ? '+' : ''}{upside.toFixed(0)} %
       </div>
     </div>
   </div>
+
+  <p class="potencial-hint">
+    <em>Potencial</em> pove, koliko bi morala cena delnice zrasti (ali pasti), da bi dosegla sredino
+    našega Fair Value razpona — ne gre za napoved, ampak razliko med trenutno ceno in našo oceno
+    poštene vrednosti.
+  </p>
 
   <article class="prose">
     <h2>Poslovni model</h2>
