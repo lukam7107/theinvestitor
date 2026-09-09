@@ -1,4 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap');
+/* cache-bust marker: --build-tag ni uporabljen v izgledu, samo prisili nov asset hash (Vercel edge 404 fix, 9.9.2026) */
+:root { --build-tag: "20260909b"; }
 
 :root {
   --bg: #07080b;
