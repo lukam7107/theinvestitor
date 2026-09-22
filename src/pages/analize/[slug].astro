@@ -46,8 +46,11 @@ const pct = (v: number) => ((v - scaleMin) / (scaleMax - scaleMin)) * 100;
 
   <div class="stat-grid">
     <div class="stat">
-      <div class="label">Cena</div>
-      <div class="value">{d.cena.toFixed(2)} {d.valuta}</div>
+      <div class="label-row">
+        <div class="label">Cena</div>
+        <span class="live-dot mono" id="live-badge" hidden>● živo</span>
+      </div>
+      <div class="value" id="stat-cena">{d.cena.toFixed(2)} {d.valuta}</div>
     </div>
     <div class="stat">
       <div class="label">Tržna kap.</div>
@@ -62,7 +65,7 @@ const pct = (v: number) => ((v - scaleMin) / (scaleMax - scaleMin)) * 100;
         <div class="label">Potencial</div>
         <span class="info-dot" title="Razlika med trenutno ceno in sredino našega Fair Value razpona — ni napoved gibanja cene, ampak ocena podcenjenosti ali precenjenosti.">i</span>
       </div>
-      <div class="value" style={`color: var(--${up ? 'green' : 'red'});`}>
+      <div class="value" id="stat-potencial" style={`color: var(--${up ? 'green' : 'red'});`}>
         {upside >= 0 ? '+' : ''}{upside.toFixed(0)} %
       </div>
     </div>
@@ -103,9 +106,9 @@ const pct = (v: number) => ((v - scaleMin) / (scaleMax - scaleMin)) * 100;
             class="zone"
             style={`left: ${pct(d.fairValueMin)}%; width: ${pct(d.fairValueMax) - pct(d.fairValueMin)}%;`}
           ></div>
-          <div class="marker" style={`left: ${pct(d.cena)}%;`}>
+          <div class="marker" id="fv-marker" style={`left: ${pct(d.cena)}%;`}>
             <span class="dot"></span>
-            <span class="marker-label mono">cena {d.cena.toFixed(2)}</span>
+            <span class="marker-label mono" id="fv-marker-label">cena {d.cena.toFixed(2)}</span>
           </div>
         </div>
         <div class="fv-legend mono">
@@ -125,3 +128,41 @@ const pct = (v: number) => ((v - scaleMin) / (scaleMax - scaleMin)) * 100;
     lastno analizo.
   </div>
 </Layout>
+
+<script define:vars={{ ticker: d.ticker, valuta: d.valuta, fvMin: d.fairValueMin, fvMax: d.fairValueMax, scaleMin, scaleMax }}>
+  (async () => {
+    try {
+      const res = await fetch(`/api/quote?symbol=${encodeURIComponent(ticker)}`);
+      if (!res.ok) return;
+      const q = await res.json();
+      if (typeof q.price !== 'number' || !q.price) return;
+
+      const price = q.price;
+      const fvMid = (fvMin + fvMax) / 2;
+      const up = fvMid >= price;
+      const upside = ((fvMid / price) - 1) * 100;
+
+      const cenaEl = document.getElementById('stat-cena');
+      if (cenaEl) cenaEl.textContent = `${price.toFixed(2)} ${valuta}`;
+
+      const potEl = document.getElementById('stat-potencial');
+      if (potEl) {
+        potEl.textContent = `${upside >= 0 ? '+' : ''}${upside.toFixed(0)} %`;
+        potEl.style.color = up ? 'var(--green)' : 'var(--red)';
+      }
+
+      const clamp = (v) => Math.max(0, Math.min(100, v));
+      const pct = (v) => clamp(((v - scaleMin) / (scaleMax - scaleMin)) * 100);
+
+      const marker = document.getElementById('fv-marker');
+      if (marker) marker.style.left = `${pct(price)}%`;
+      const markerLabel = document.getElementById('fv-marker-label');
+      if (markerLabel) markerLabel.textContent = `cena ${price.toFixed(2)}`;
+
+      const liveBadge = document.getElementById('live-badge');
+      if (liveBadge) liveBadge.hidden = false;
+    } catch {
+      // tiho spodleti — ostane statična cena iz analize
+    }
+  })();
+</script>

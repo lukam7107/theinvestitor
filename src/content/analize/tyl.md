@@ -7,8 +7,8 @@ datum: 2026-09-09
 cena: 347.82
 valuta: "USD"
 marketCap: "$14.9B"
-fairValueMin: 350
-fairValueMax: 465
+fairValueMin: 370
+fairValueMax: 445
 fairValueValuta: "USD"
 demo: false
 povzetek: "Vodilni ponudnik programske opreme za ameriške lokalne oblasti prehaja na SaaS model z visoko dobičkonosnostjo — po naši oceni ga trg trenutno vrednoti nekoliko pod tem, kar bi si zaslužil."

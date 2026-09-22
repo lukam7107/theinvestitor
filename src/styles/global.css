@@ -340,6 +340,12 @@ a.card p { color: var(--text-soft); font-size: 0.93rem; margin: 0; }
   margin: -18px 0 8px;
 }
 .potencial-hint em { color: var(--text-soft); font-style: normal; }
+.live-dot {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--green);
+}
 
 /* ── Interaktivni graf cene ────────────── */
 .price-chart-card {

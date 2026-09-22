@@ -7,8 +7,8 @@ datum: 2026-09-09
 cena: 149.03
 valuta: "USD"
 marketCap: "$2.0T"
-fairValueMin: 110
-fairValueMax: 180
+fairValueMin: 130
+fairValueMax: 160
 fairValueValuta: "USD"
 demo: false
 povzetek: "Od junijskega IPO-ja delnica močno niha — rast Starlinka in nov AI segment sta impresivna, vesoljski segment pa še izgublja denar, vrednotenje pa je izjemno zahtevno."

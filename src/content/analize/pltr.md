@@ -7,8 +7,8 @@ datum: 2026-09-09
 cena: 170.30
 valuta: "USD"
 marketCap: "$409B"
-fairValueMin: 140
-fairValueMax: 210
+fairValueMin: 158
+fairValueMax: 192
 fairValueValuta: "USD"
 demo: false
 povzetek: "Rast prihodkov nad 90 % letno in izjemna dobičkonosnost upravičujeta premijsko vrednotenje, a delnica ostaja ena najbolj razvpitih glede vprašanja, ali je trg z njo že prehitel prihodnost."
