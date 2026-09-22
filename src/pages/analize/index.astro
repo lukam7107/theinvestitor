@@ -25,8 +25,8 @@ const analize = (await getCollection('analize')).sort(
             <Sparkline seed={entry.data.ticker} up={up} />
           </div>
           <div class="card-meta">
-            <span class="mono price">{entry.data.cena.toFixed(2)} {entry.data.valuta}</span>
-            <span class={`mono fv ${up ? 'pos' : 'neg'}`}>
+            <span class="mono price" data-ticker={entry.data.ticker} data-valuta={entry.data.valuta}>{entry.data.cena.toFixed(2)} {entry.data.valuta}</span>
+            <span class={`mono fv ${up ? 'pos' : 'neg'}`} data-fvmin={entry.data.fairValueMin} data-fvmax={entry.data.fairValueMax}>
               FV {entry.data.fairValueMin}–{entry.data.fairValueMax} {entry.data.fairValueValuta}
             </span>
           </div>
@@ -35,3 +35,27 @@ const analize = (await getCollection('analize')).sort(
     })}
   </section>
 </Layout>
+
+<script>
+  (function () {
+    document.querySelectorAll('.card-meta .price[data-ticker]').forEach((el) => {
+      const ticker = el.dataset.ticker;
+      const valuta = el.dataset.valuta;
+      fetch(`/api/quote?symbol=${encodeURIComponent(ticker)}`)
+        .then((r) => (r.ok ? r.json() : Promise.reject()))
+        .then((q) => {
+          if (typeof q.price !== 'number' || !q.price) return;
+          el.textContent = `${q.price.toFixed(2)} ${valuta}`;
+          const card = el.closest('a.card');
+          const fvEl = card && card.querySelector('.fv[data-fvmin]');
+          if (fvEl) {
+            const fvMid = (parseFloat(fvEl.dataset.fvmin) + parseFloat(fvEl.dataset.fvmax)) / 2;
+            const up = fvMid >= q.price;
+            fvEl.classList.toggle('pos', up);
+            fvEl.classList.toggle('neg', !up);
+          }
+        })
+        .catch(() => {});
+    });
+  })();
+</script>
